@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kuis Interaktif Fathul Makkah</title>
+<style>
+:root{--green:#103c32;--green2:#245447;--gold:#d5b66b;--paper:#f5f7f5;--ink:#17231f;--muted:#61716a;--line:#dce5df;--right:#18794e;--wrong:#a45d10}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+main{max-width:820px;margin:28px auto;padding:0 16px 40px}.hero{background:var(--green);color:white;border-radius:22px;padding:26px;box-shadow:0 10px 30px #173d3017}.eyebrow{color:#ead79d;font-size:.78rem;font-weight:800;letter-spacing:.12em}.hero h1{margin:.2em 0;font-size:clamp(1.8rem,5vw,2.7rem);line-height:1.1}.hero p{color:#e1e9e4;margin:.6rem 0 1.2rem}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:var(--green2);border-radius:12px;padding:12px}.stat small{display:block;color:#dce8e2}.stat strong{font-size:1.55rem}.card{background:white;border:1px solid var(--line);border-radius:20px;padding:clamp(18px,4vw,28px);margin-top:18px;box-shadow:0 4px 18px #102f2510}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.pill{background:#edf3ef;color:#31594a;border-radius:999px;padding:5px 10px;font-size:.82rem;font-weight:700}.track{height:7px;background:#e8eeea;border-radius:99px;overflow:hidden;margin:14px 0 20px}.track div{height:100%;background:#24856b;width:0;transition:width .2s}.muted{color:var(--muted)}h2{font-size:1.3rem;line-height:1.35;margin:8px 0 18px}.options{display:grid;gap:10px}.option{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);padding:13px 14px;border-radius:12px;cursor:pointer;transition:.15s}.option:hover{border-color:#7aa995;background:#f8fbf9}.option:has(input:checked){border-color:#24856b;background:#edf7f1}.option input{margin-top:5px;accent-color:#18794e}.option.disabled{cursor:default}.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}button{font:inherit;font-weight:750;border:0;border-radius:11px;padding:12px 17px;cursor:pointer;background:#17664f;color:white}button:hover{filter:brightness(1.06)}button:disabled{opacity:.4;cursor:not-allowed}.secondary{background:#eef3ef;color:#29463a;border:1px solid var(--line)}.feedback{margin-top:18px;border-radius:14px;padding:17px;background:#f1f5f2;border:1px solid var(--line)}.feedback.good{border-left:5px solid var(--right)}.feedback.bad{border-left:5px solid var(--wrong)}.feedback h3{margin:0 0 8px}.feedback p{margin:7px 0}.result{text-align:center}.score{font-size:3rem;font-weight:850;color:#18794e;line-height:1.2}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.result-grid div{background:#f1f5f2;padding:16px;border-radius:12px}.result-grid strong{display:block;font-size:1.8rem}.answer-list{display:grid;gap:8px;margin-top:18px;text-align:left}.answer-list details{border:1px solid var(--line);border-radius:10px;padding:10px 12px}.answer-list summary{cursor:pointer;font-weight:700}.footer{font-size:.85rem;text-align:center;color:var(--muted);margin:18px 0}
+@media(max-width:480px){main{margin:14px auto}.hero{padding:20px}.stat{padding:9px}.stat strong{font-size:1.3rem}.btns button{flex:1}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+  <div class="eyebrow">KUIS SEJARAH ISLAM • PAI / SKI</div>
+  <h1>Fathul Makkah</h1>
+  <p>20 soal interaktif • Skor otomatis • Pembahasan setelah menjawab</p>
+  <div class="stats">
+    <div class="stat"><small>Jumlah soal</small><strong>20</strong></div>
+    <div class="stat"><small>Nilai maksimal</small><strong>100</strong></div>
+    <div class="stat"><small>Skor saat ini</small><strong id="liveScore">0</strong></div>
+  </div>
+</header>
+<section class="card" id="quizCard">
+  <div class="row"><strong id="questionCounter">Soal 1 dari 20</strong><span class="pill" id="percent">5%</span></div>
+  <div class="track"><div id="progress"></div></div>
+  <p class="muted">Pilih satu jawaban yang paling tepat.</p>
+  <h2 id="questionText"></h2>
+  <form id="answerForm"><div class="options" id="options"></div>
+    <div class="btns"><button id="checkBtn" type="submit" disabled>Periksa jawaban</button><button type="button" class="secondary" id="prevBtn">← Sebelumnya</button><button type="button" class="secondary" id="resetBtn">↻ Mulai ulang</button></div>
+  </form>
+  <div id="feedback" class="feedback" hidden aria-live="polite"></div>
+  <div class="row muted" style="margin-top:18px;font-size:.88rem"><span id="answeredCount">Sudah dijawab: 0/20</span><span id="correctCount">Benar: 0</span></div>
+</section>
+<section class="card result" id="resultCard" hidden></section>
+<p class="footer">Belajar sejarah dengan teliti, mengambil hikmah, dan meneladani akhlak Rasulullah SAW.</p>
+</main>
+<script>
+const questions = [
+{q:"Fathul Makkah berarti …",o:["Perjalanan hijrah ke Madinah","Pembebasan atau penaklukan Kota Makkah","Perang pertama kaum Muslimin","Perjanjian antara Romawi dan Persia"],a:1,e:"Fathul Makkah berarti pembebasan atau penaklukan Kota Makkah. Peristiwa ini penting karena kaum Muslimin kembali memasuki kota yang dahulu mereka tinggalkan akibat tekanan kaum Quraisy."},
+{q:"Fathul Makkah terjadi pada tahun …",o:["2 H / 624 M","6 H / 628 M","8 H / 630 M","10 H / 632 M"],a:2,e:"Fathul Makkah terjadi pada tahun 8 Hijriah atau 630 Masehi, pada masa kehidupan Nabi Muhammad SAW."},
+{q:"Peristiwa Fathul Makkah berlangsung pada bulan …",o:["Muharam","Ramadan","Syawal","Zulkaidah"],a:1,e:"Fathul Makkah berlangsung pada bulan Ramadan tahun 8 H. Peristiwa ini menjadi bagian penting dari sejarah perjuangan umat Islam."},
+{q:"Perjanjian yang dilanggar sebelum terjadinya Fathul Makkah adalah …",o:["Perjanjian Aqabah","Perjanjian Hudaibiyah","Perjanjian Madinah","Perjanjian Tabuk"],a:1,e:"Perjanjian Hudaibiyah merupakan kesepakatan damai antara kaum Muslimin dan kaum Quraisy pada tahun 6 H. Pelanggaran terhadap kesepakatan tersebut menjadi penyebab utama Fathul Makkah."},
+{q:"Kabilah yang menjadi sekutu kaum Muslimin dan mengalami serangan adalah …",o:["Bani Bakr","Bani Umayyah","Bani Khuza'ah","Bani Tsaqif"],a:2,e:"Bani Khuza'ah merupakan sekutu kaum Muslimin. Mereka diserang oleh Bani Bakr, yang bersekutu dengan Quraisy. Peristiwa ini berkaitan dengan pelanggaran Perjanjian Hudaibiyah."},
+{q:"Kabilah yang menyerang Bani Khuza'ah adalah …",o:["Bani Bakr","Bani Hasyim","Bani Najjar","Bani Aus"],a:0,e:"Bani Bakr adalah sekutu Quraisy yang menyerang Bani Khuza'ah. Keterlibatan pihak Quraisy dalam serangan tersebut dipandang sebagai pelanggaran terhadap perdamaian."},
+{q:"Siapakah pemimpin kaum Muslimin dalam Fathul Makkah?",o:["Abu Bakar ash-Shiddiq","Umar bin Khattab","Ali bin Abi Thalib","Nabi Muhammad SAW"],a:3,e:"Nabi Muhammad SAW memimpin kaum Muslimin dalam Fathul Makkah. Beliau mempersiapkan perjalanan dengan strategi yang matang dan mengutamakan penyelesaian konflik dengan korban seminimal mungkin."},
+{q:"Berapa jumlah pasukan Muslimin yang umum disebut dalam riwayat Fathul Makkah?",o:["1.000 orang","3.000 orang","10.000 orang","30.000 orang"],a:2,e:"Jumlah pasukan Muslimin yang umum disebut dalam riwayat sejarah adalah sekitar 10.000 orang. Ini menunjukkan perkembangan kekuatan kaum Muslimin sejak hijrah ke Madinah."},
+{q:"Dari kota manakah pasukan Muslimin berangkat menuju Makkah?",o:["Thaif","Madinah","Yerusalem","Yaman"],a:1,e:"Pasukan Muslimin berangkat dari Madinah menuju Makkah. Madinah menjadi pusat pemerintahan dan kehidupan masyarakat Muslim setelah Nabi Muhammad SAW berhijrah."},
+{q:"Mengapa persiapan menuju Makkah dilakukan dengan menjaga kerahasiaan?",o:["Agar penduduk Madinah tidak mengetahui Islam","Agar perjalanan tidak perlu dipersiapkan","Untuk mengurangi kesempatan lawan mempersiapkan perlawanan","Agar semua penduduk Makkah meninggalkan kota"],a:2,e:"Kerahasiaan merupakan bagian dari strategi untuk mengurangi kesempatan pihak Quraisy mempersiapkan perlawanan. Ini mengajarkan pentingnya perencanaan dan kehati-hatian."},
+{q:"Siapakah tokoh Quraisy yang menemui Nabi sebelum memasuki Makkah dan kemudian menerima Islam?",o:["Abu Lahab","Abu Sufyan bin Harb","Abu Jahal","Umayyah bin Khalaf"],a:1,e:"Abu Sufyan bin Harb merupakan tokoh penting Quraisy yang menemui Nabi Muhammad SAW menjelang Fathul Makkah dan kemudian menerima Islam. Ia juga berperan menyampaikan jaminan keamanan kepada penduduk Makkah."},
+{q:"Sikap Nabi Muhammad SAW ketika berhasil memasuki Makkah paling dikenal karena …",o:["Membalas semua perlakuan buruk tanpa pengecualian","Memerintahkan seluruh penduduk meninggalkan Makkah","Memberikan pengampunan secara luas kepada penduduk","Menghapus semua hubungan antarkabilah"],a:2,e:"Nabi Muhammad SAW memberikan pengampunan secara luas kepada penduduk Makkah, dengan pengecualian tertentu dalam riwayat sejarah. Sikap ini mencerminkan kasih sayang, pengendalian diri, dan upaya memulihkan perdamaian."},
+{q:"Apa yang dilakukan Nabi Muhammad SAW terhadap berhala-berhala di sekitar Ka'bah?",o:["Memindahkannya ke Madinah","Membiarkannya sebagai simbol persatuan","Memerintahkan penghancurannya","Mengubahnya menjadi tempat perdagangan"],a:2,e:"Setelah Fathul Makkah, berhala-berhala di sekitar Ka'bah dihancurkan. Tindakan ini menandai pemulihan Ka'bah sebagai tempat ibadah kepada Allah dalam ajaran tauhid."},
+{q:"Apa makna utama pengampunan dalam peristiwa Fathul Makkah?",o:["Kemenangan harus selalu diikuti hukuman","Kekuatan dapat digunakan dengan tanggung jawab dan kasih sayang","Orang yang menang tidak perlu menaati aturan","Semua konflik harus dilupakan tanpa penyelesaian"],a:1,e:"Pengampunan menunjukkan bahwa kemenangan tidak harus diikuti pembalasan. Hal ini mengajarkan pengendalian diri, kebijaksanaan, dan penggunaan kekuasaan secara bertanggung jawab."},
+{q:"Bagaimana gambaran umum masuknya pasukan Muslimin ke Makkah?",o:["Berlangsung dengan pertempuran besar di seluruh kota","Berlangsung tanpa perlawanan berarti, meskipun terjadi perlawanan terbatas","Makkah ditinggalkan seluruh penduduknya","Pasukan Muslimin membatalkan perjalanan"],a:1,e:"Fathul Makkah secara umum berlangsung tanpa perlawanan berarti, meskipun terdapat perlawanan terbatas di beberapa bagian. Karena itu, tidak tepat menyatakan bahwa sama sekali tidak ada kekerasan di seluruh wilayah."},
+{q:"Nilai akhlak yang paling jelas dari sikap Nabi terhadap penduduk Makkah adalah …",o:["Kesombongan","Dendam","Pemaaf dan rendah hati","Mementingkan kelompok sendiri"],a:2,e:"Sikap pemaaf dan rendah hati tampak ketika Nabi memperoleh kemenangan atas pihak yang sebelumnya memusuhi beliau. Nilai ini dapat diterapkan dengan tidak merendahkan orang lain ketika kita berhasil."},
+{q:"Apa hubungan Fathul Makkah dengan Perjanjian Hudaibiyah?",o:["Fathul Makkah terjadi sebelum perjanjian itu dibuat","Pelanggaran perjanjian menjadi penyebab utama Fathul Makkah","Keduanya tidak memiliki hubungan sejarah","Perjanjian itu dibuat setelah Makkah ditaklukkan"],a:1,e:"Perjanjian Hudaibiyah menciptakan masa damai antara kaum Muslimin dan Quraisy. Serangan terhadap Bani Khuza'ah yang berkaitan dengan pihak Quraisy merusak kesepakatan tersebut dan menjadi sebab utama Fathul Makkah."},
+{q:"Pelajaran dari strategi Nabi dalam Fathul Makkah adalah …",o:["Bertindak tanpa mempertimbangkan akibat","Mengutamakan kekerasan dalam setiap konflik","Merencanakan tindakan dengan matang dan bijaksana","Mengabaikan keselamatan masyarakat"],a:2,e:"Strategi Nabi memperlihatkan pentingnya perencanaan, menjaga kerahasiaan yang diperlukan, dan mempertimbangkan dampak tindakan. Keputusan yang matang dapat mencegah masalah berkembang menjadi konflik yang lebih besar."},
+{q:"Mengapa Fathul Makkah menjadi peristiwa penting bagi perkembangan Islam?",o:["Karena mengakhiri seluruh sejarah Islam","Karena memperkuat kedudukan Islam di Makkah dan membuka jalan bagi perkembangan lebih luas","Karena memindahkan Ka'bah ke Madinah","Karena menghapus kewajiban ibadah"],a:1,e:"Fathul Makkah memperkuat kedudukan kaum Muslimin di Makkah dan memberi pengaruh besar terhadap perkembangan Islam di Jazirah Arab. Peristiwa ini juga mengubah hubungan antara kaum Muslimin dan banyak penduduk Makkah."},
+{q:"Jika kamu menghadapi orang yang pernah menyakitimu, pelajaran yang paling sesuai dari Fathul Makkah adalah …",o:["Membalas setiap kesalahan dengan kesalahan yang sama","Memaafkan secara bijaksana tanpa mengabaikan keselamatan dan keadilan","Menyebarkan keburukannya kepada semua orang","Memaksanya meminta maaf di depan umum"],a:1,e:"Teladan pengampunan dapat diterapkan dengan memilih jalan damai ketika memungkinkan. Memaafkan bukan berarti membenarkan kesalahan atau membiarkan bahaya berlanjut; keadilan dan keselamatan tetap penting."}
+];
+let index=0, selected=null, locked=false, answers=Array(questions.length).fill(null), correct=0;
+const $=id=>document.getElementById(id);
+function render(){
+ const q=questions[index]; selected=answers[index]; locked=selected!==null;
+ $("questionCounter").textContent=`Soal ${index+1} dari ${questions.length}`;
+ $("percent").textContent=`${Math.round((index+1)/questions.length*100)}%`;
+ $("progress").style.width=`${(index+1)/questions.length*100}%`;
+ $("questionText").textContent=q.q;
+ $("options").innerHTML="";
+ q.o.forEach((option,i)=>{
+   const label=document.createElement("label");label.className="option"+(locked?" disabled":"");
+   const radio=document.createElement("input");radio.type="radio";radio.name="answer";radio.value=i;radio.checked=selected===i;radio.disabled=locked;
+   radio.addEventListener("change",()=>{selected=i;$("checkBtn").disabled=false;});
+   const text=document.createElement("span");text.textContent=String.fromCharCode(65+i)+". "+option;
+   label.append(radio,text);$("options").append(label);
+ });
+ $("checkBtn").textContent=locked?(index===questions.length-1?"Lihat hasil akhir":"Lanjut ke soal berikutnya"):"Periksa jawaban";
+ $("checkBtn").disabled=!locked&&selected===null;
+ $("prevBtn").disabled=index===0;
+ $("feedback").hidden=!locked;
+ if(locked){
+   const ok=selected===q.a;$("feedback").className="feedback "+(ok?"good":"bad");
+   $("feedback").innerHTML=`<h3>${ok?"✓ Jawaban benar!":"📘 Belum tepat, yuk pelajari!"}</h3><p><strong>Jawaban benar: ${String.fromCharCode(65+q.a)}. ${escapeHtml(q.o[q.a])}</strong></p><p><strong>Pembahasan:</strong> ${escapeHtml(q.e)}</p><p class="muted">Skor: ${correct*5} dari 100</p>`;
+ }
+ $("liveScore").textContent=correct*5;
+ $("answeredCount").textContent=`Sudah dijawab: ${answers.filter(x=>x!==null).length}/${questions.length}`;
+ $("correctCount").textContent=`Benar: ${correct}`;
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+$("answerForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(locked){
+   if(index===questions.length-1){showResult();return;}
+   index++;render();return;
+ }
+ if(selected===null)return;
+ answers[index]=selected;locked=true;correct=answers.reduce((n,a,i)=>n+(a===questions[i].a?1:0),0);render();
+});
+$("prevBtn").addEventListener("click",()=>{if(index>0){index--;render();}});
+$("resetBtn").addEventListener("click",resetQuiz);
+function resetQuiz(){index=0;selected=null;locked=false;answers=Array(questions.length).fill(null);correct=0;$("resultCard").hidden=true;$("quizCard").hidden=false;render();window.scrollTo({top:0,behavior:"smooth"});}
+function showResult(){
+ $("quizCard").hidden=true;$("resultCard").hidden=false;
+ const score=correct*5, wrong=questions.length-correct;
+ const message=score>=90?"Luar biasa! Pemahamanmu sangat baik.":score>=75?"Bagus sekali! Pertahankan pemahamanmu.":score>=60?"Cukup baik. Terus berlatih dan pelajari pembahasan.":"Jangan menyerah. Pelajari pembahasan lalu coba lagi.";
+ $("resultCard").innerHTML=`<div style="font-size:2.4rem">🏆</div><h2>Kuis selesai!</h2><p class="muted">Hasil latihan Fathul Makkah</p><div class="score">${score}/100</div><div class="track"><div style="width:${score}%"></div></div><div class="result-grid"><div><strong>${correct}</strong><span>Jawaban benar</span></div><div><strong>${wrong}</strong><span>Jawaban salah</span></div></div><h3>${message}</h3><p>Setiap jawaban benar bernilai 5 poin. Nilai dihitung otomatis dari 20 soal.</p><div class="btns" style="justify-content:center"><button id="retryBtn">↻ Ulangi kuis</button><button class="secondary" id="reviewBtn">Lihat pembahasan semua soal</button></div><div id="review" class="answer-list" hidden></div>`;
+ $("retryBtn").addEventListener("click",resetQuiz);
+ $("reviewBtn").addEventListener("click",()=>{
+   const r=$("review");r.hidden=!r.hidden;
+   $("reviewBtn").textContent=r.hidden?"Lihat pembahasan semua soal":"Sembunyikan pembahasan";
+   if(!r.dataset.ready){r.innerHTML=questions.map((q,i)=>`<details><summary>${i+1}. ${escapeHtml(q.q)} — ${answers[i]===q.a?"Benar":"Salah"}</summary><p><strong>Jawaban: ${String.fromCharCode(65+q.a)}. ${escapeHtml(q.o[q.a])}</strong></p><p>${escapeHtml(q.e)}</p></details>`).join("");r.dataset.ready="1";}
+ });
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+render();
+</script>
+</body>
+</html>
